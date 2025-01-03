@@ -10,10 +10,9 @@ messages = {
 
 @app.route("/send", methods=["POST"])
 def send_message():
-    # Get the sender and message from the request
-    data = request.json
-    sender = data.get("sender")
-    message = data.get("message")
+    # Get the sender and message from the form data
+    sender = request.form.get("sender")
+    message = request.form.get("message")
 
     if sender == "client1":
         # Store the message for client2
@@ -28,7 +27,7 @@ def send_message():
 
 @app.route("/receive", methods=["GET"])
 def receive_message():
-    # Get the client identifier
+    # Get the client identifier from query parameters
     client = request.args.get("client")
 
     if client not in messages:
@@ -41,7 +40,7 @@ def receive_message():
 
     if message is None:
         return "No messages", 200
-    return jsonify({"message": message}), 200
+    return f"Message: {message}", 200
 
 if __name__ == "__main__":
     app.run(debug=True)
