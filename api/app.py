@@ -12,7 +12,8 @@ def home():
     # Add the IP address to the list
     client_ips.append(client_ip)
     # Log the IP address (optional, for debugging)
-    print(f"Client IP: {client_ip}")
+    for client_ip in client_ips:
+        print(f"Client IP: {client_ip}")
     return "ok", 200
 
 @app.route("/ips", methods=["GET"])
