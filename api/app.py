@@ -1,46 +1,75 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
 
 app = Flask(__name__)
 
-# Shared dictionary to store messages for clients
-messages = {
-    "client1": None,  # Message for client1
-    "client2": None   # Message for client2
-}
+# Data storage
+rooms = {}  # Stores room data in the form {room_id: {"clients": [], "messages": []}}
 
-@app.route("/send", methods=["POST"])
-def send_message():
-    # Get the sender and message from the form data
-    sender = request.form.get("sender")
-    message = request.form.get("message")
+@app.route("/")
+def list_rooms():
+    """List all active rooms and their clients."""
+    if not rooms:
+        return "No active rooms."
+    
+    result = "Active Rooms:\n"
+    for room_id, data in rooms.items():
+        clients = ", ".join(data["clients"]) if data["clients"] else "No clients"
+        result += f"Room ID: {room_id}, Clients: {clients}\n"
+    return result
 
-    if sender == "client1":
-        # Store the message for client2
-        messages["client2"] = message
-    elif sender == "client2":
-        # Store the message for client1
-        messages["client1"] = message
-    else:
-        return "Invalid sender", 400
+@app.route("/register", methods=["GET"])
+def register():
+    return """
+    Choose an option:
+    1. Create Room: Visit /create-room
+    2. Join Room: Visit /join-room?room_id=<room-id>
+    """
 
-    return "Message sent", 200
+@app.route("/create-room", methods=["GET"])
+def create_room():
+    import uuid
+    # Generate a unique room ID
+    room_id = str(uuid.uuid4())[:8]  # Shortened UUID for simplicity
+    rooms[room_id] = {"clients": [], "messages": []}
+    return f"Room created successfully! Room ID: {room_id}\nYou can access the room at /{room_id}"
 
-@app.route("/receive", methods=["GET"])
-def receive_message():
-    # Get the client identifier from query parameters
-    client = request.args.get("client")
+@app.route("/join-room", methods=["GET"])
+def join_room():
+    room_id = request.args.get("room_id")
+    client_ip = request.remote_addr
 
-    if client not in messages:
-        return "Invalid client", 400
+    if not room_id or room_id not in rooms:
+        return "Room ID is invalid or does not exist."
 
-    # Get the message for the client
-    message = messages[client]
-    # Clear the message after delivering
-    messages[client] = None
+    # Add the client to the room if not already present
+    if client_ip not in rooms[room_id]["clients"]:
+        rooms[room_id]["clients"].append(client_ip)
 
-    if message is None:
-        return "No messages", 200
-    return f"Message: {message}", 200
+    return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
+
+@app.route("/<room_id>", methods=["GET", "POST"])
+def room_communication(room_id):
+    if room_id not in rooms:
+        return "Room does not exist."
+
+    if request.method == "GET":
+        # Fetch all messages in the room
+        messages = rooms[room_id]["messages"]
+        return "\n".join(messages) if messages else "No messages in this room."
+
+    elif request.method == "POST":
+        # Add a new message to the room
+        message = request.form.get("message")
+        client_ip = request.remote_addr
+
+        if client_ip not in rooms[room_id]["clients"]:
+            return "You are not a participant in this room."
+
+        if not message:
+            return "Message cannot be empty."
+
+        rooms[room_id]["messages"].append(f"{client_ip}: {message}")
+        return "Message sent successfully."
 
 if __name__ == "__main__":
     app.run(debug=True)
