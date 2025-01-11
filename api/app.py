@@ -55,6 +55,7 @@ def room_communication(room_id):
     if request.method == "GET":
         # Fetch all messages in the room
         messages = rooms[room_id]["messages"]
+        rooms[room_id]["messages"] = None
         return "\n".join(messages) if messages else "No messages in this room."
 
     elif request.method == "POST":
