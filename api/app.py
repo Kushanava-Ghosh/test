@@ -47,7 +47,7 @@ def join_room():
         rooms[room_id]["clients"].append(client_ip)
 
     # return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
-    return "Joined room {room_id}"
+    return f"Joined room {room_id}"
 
 @app.route("/<room_id>", methods=["GET", "POST"])
 def room_communication(room_id):
