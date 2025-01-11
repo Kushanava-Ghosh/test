@@ -69,7 +69,7 @@ def room_communication(room_id):
         if not message:
             return "Message cannot be empty."
 
-        rooms[room_id]["messages"] = (f"{client_ip}: {message}")
+        rooms[room_id]["messages"] = message
         return "Message sent successfully."
 
 if __name__ == "__main__":
