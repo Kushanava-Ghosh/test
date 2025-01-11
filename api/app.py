@@ -5,18 +5,6 @@ app = Flask(__name__)
 # Data storage
 rooms = {}  # Stores room data in the form {room_id: {"clients": [], "messages": []}}
 
-@app.route("/")
-def list_rooms():
-    """List all active rooms and their clients."""
-    if not rooms:
-        return "No active rooms."
-    
-    result = "Active Rooms:\n"
-    for room_id, data in rooms.items():
-        clients = ", ".join(data["clients"]) if data["clients"] else "No clients"
-        result += f"Room ID: {room_id}, Clients: {clients}\n"
-    return result
-
 @app.route("/register", methods=["GET"])
 def register():
     return """
@@ -55,8 +43,7 @@ def room_communication(room_id):
     if request.method == "GET":
         # Fetch all messages in the room
         messages = rooms[room_id]["messages"]
-        rooms[room_id]["messages"] = None
-        return "\n".join(messages) if messages else "No messages"
+        return "\n".join(messages) if messages else "No messages in this room."
 
     elif request.method == "POST":
         # Add a new message to the room
@@ -69,7 +56,7 @@ def room_communication(room_id):
         if not message:
             return "Message cannot be empty."
 
-        rooms[room_id]["messages"].append(f"{message}")
+        rooms[room_id]["messages"].append(f"{client_ip}: {message}")
         return "Message sent successfully."
 
 if __name__ == "__main__":
