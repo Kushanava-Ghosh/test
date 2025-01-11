@@ -17,13 +17,13 @@ def list_rooms():
         result += f"Room ID: {room_id}, Clients: {clients}\n"
     return result
 
-@app.route("/register", methods=["GET"])
-def register():
-    return """
-    Choose an option:
-    1. Create Room: Visit /create-room
-    2. Join Room: Visit /join-room?room_id=<room-id>
-    """
+# @app.route("/register", methods=["GET"])
+# def register():
+#     return """
+#     Choose an option:
+#     1. Create Room: Visit /create-room
+#     2. Join Room: Visit /join-room?room_id=<room-id>
+#     """
 
 @app.route("/create-room", methods=["GET"])
 def create_room():
@@ -31,7 +31,8 @@ def create_room():
     # Generate a unique room ID
     room_id = str(uuid.uuid4())[:8]  # Shortened UUID for simplicity
     rooms[room_id] = {"clients": [], "messages": []}
-    return f"Room created successfully! Room ID: {room_id}\nYou can access the room at /{room_id}"
+    # return f"Room created successfully! Room ID: {room_id}\nYou can access the room at /{room_id}"
+    return f"{room_id}"
 
 @app.route("/join-room", methods=["GET"])
 def join_room():
@@ -45,7 +46,8 @@ def join_room():
     if client_ip not in rooms[room_id]["clients"]:
         rooms[room_id]["clients"].append(client_ip)
 
-    return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
+    # return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
+    return "Joined room {room_id}"
 
 @app.route("/<room_id>", methods=["GET", "POST"])
 def room_communication(room_id):
