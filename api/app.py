@@ -5,6 +5,18 @@ app = Flask(__name__)
 # Data storage
 rooms = {}  # Stores room data in the form {room_id: {"clients": [], "messages": []}}
 
+@app.route("/")
+def list_rooms():
+    """List all active rooms and their clients."""
+    if not rooms:
+        return "No active rooms."
+    
+    result = "Active Rooms:\n"
+    for room_id, data in rooms.items():
+        clients = ", ".join(data["clients"]) if data["clients"] else "No clients"
+        result += f"Room ID: {room_id}, Clients: {clients}\n"
+    return result
+
 @app.route("/register", methods=["GET"])
 def register():
     return """
