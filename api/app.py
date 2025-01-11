@@ -56,7 +56,7 @@ def room_communication(room_id):
         # Fetch all messages in the room
         messages = rooms[room_id]["messages"]
         rooms[room_id]["messages"] = []
-        return "\n".join(messages) if messages else "No messages in this room."
+        return "\n".join(messages) if messages else "No messages"
 
     elif request.method == "POST":
         # Add a new message to the room
