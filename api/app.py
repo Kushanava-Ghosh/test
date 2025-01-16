@@ -42,6 +42,10 @@ def join_room():
     if not room_id or room_id not in rooms:
         return "Room ID is invalid or does not exist."
 
+    # Check if the room already has two clients
+    if len(rooms[room_id]["clients"]) >= 2:
+        return "Room is full. You cannot join."
+
     # Add the client to the room if not already present
     if client_ip not in rooms[room_id]["clients"]:
         rooms[room_id]["clients"].append(client_ip)
