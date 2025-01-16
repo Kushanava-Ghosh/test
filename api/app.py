@@ -30,7 +30,7 @@ def create_room():
     import uuid
     # Generate a unique room ID
     room_id = str(uuid.uuid4())[:8]  # Shortened UUID for simplicity
-    rooms[room_id] = {"clients": [], "messages": []}
+    rooms[room_id] = {"clients": []}
     # return f"Room created successfully! Room ID: {room_id}\nYou can access the room at /{room_id}"
     return f"{room_id}"
 
@@ -49,25 +49,31 @@ def join_room():
     # Add the client to the room if not already present
     if client_ip not in rooms[room_id]["clients"]:
         rooms[room_id]["clients"].append(client_ip)
-
+        
+    room[room_id][client_ip] = "No messages"
+    
     # return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
     return f"Joined room {room_id}"
 
 @app.route("/<room_id>", methods=["GET", "POST"])
 def room_communication(room_id):
+    client_ip = request.remote_addr
+    
     if room_id not in rooms:
         return "Room does not exist."
 
     if request.method == "GET":
         # Fetch all messages in the room
-        messages = rooms[room_id]["messages"]
-        rooms[room_id]["messages"] = []
-        return "\n".join(messages) if messages else "No messages"
+        messages = ""
+        for key, value in rooms[room_id].items():
+            if key != "clients" and key != client_ip:
+                messages = rooms[room_id][key]
+                rooms[room_id][key] = "No messages"
+        return messages
 
     elif request.method == "POST":
         # Add a new message to the room
         message = request.form.get("message")
-        client_ip = request.remote_addr
 
         if client_ip not in rooms[room_id]["clients"]:
             return "You are not a participant in this room."
@@ -75,7 +81,7 @@ def room_communication(room_id):
         if not message:
             return "Message cannot be empty."
 
-        rooms[room_id]["messages"].append(f"{message}")
+        rooms[room_id][client_ip] = message
         return "Message sent successfully."
 
 if __name__ == "__main__":
