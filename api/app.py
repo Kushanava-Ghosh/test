@@ -50,7 +50,7 @@ def join_room():
     if client_ip not in rooms[room_id]["clients"]:
         rooms[room_id]["clients"].append(client_ip)
         
-    room[room_id][client_ip] = "No messages"
+    rooms[room_id][client_ip] = "No messages"
     
     # return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
     return f"Joined room {room_id}"
