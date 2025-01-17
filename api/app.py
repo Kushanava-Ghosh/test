@@ -45,12 +45,17 @@ def join_room():
     # Check if the room already has two clients
     if len(rooms[room_id]["clients"]) >= 2:
         return "Room is full. You cannot join."
-
+        
     # Add the client to the room if not already present
     if client_ip not in rooms[room_id]["clients"]:
         rooms[room_id]["clients"].append(client_ip)
         
     rooms[room_id][client_ip] = "No messages"
+
+    if len(rooms[room_id]["clients"] == 2:
+        for key, value in rooms[room_id].items():
+            if key != "clients":
+                rooms[room_id][key] == "START"
     
     # return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
     return f"Joined room {room_id}"
