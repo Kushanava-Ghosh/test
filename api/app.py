@@ -55,7 +55,7 @@ def join_room():
     if len(rooms[room_id]["clients"]) == 2:
         for key, value in rooms[room_id].items():
             if key != "clients":
-                rooms[room_id][key] == "START"
+                rooms[room_id][key] = "START"
     
     # return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
     return f"Joined room {room_id}"
