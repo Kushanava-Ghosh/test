@@ -52,7 +52,7 @@ def join_room():
         
     rooms[room_id][client_ip] = "No messages"
 
-    if len(rooms[room_id]["clients"] == 2:
+    if len(rooms[room_id]["clients"]) == 2:
         for key, value in rooms[room_id].items():
             if key != "clients":
                 rooms[room_id][key] == "START"
