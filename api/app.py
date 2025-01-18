@@ -1,5 +1,6 @@
 from flask import Flask, request
 import random
+import time
 
 app = Flask(__name__)
 
@@ -54,6 +55,7 @@ def join_room():
     rooms[room_id][client_ip] = "No messages"
 
     if len(rooms[room_id]["clients"]) == 2:
+        random.seed(time.time())
         # for key, value in rooms[room_id].items():
         #     if key != "clients":
         #         rooms[room_id][key] = "START"
