@@ -1,4 +1,5 @@
 from flask import Flask, request
+import random
 
 app = Flask(__name__)
 
@@ -53,9 +54,12 @@ def join_room():
     rooms[room_id][client_ip] = "No messages"
 
     if len(rooms[room_id]["clients"]) == 2:
-        for key, value in rooms[room_id].items():
-            if key != "clients":
-                rooms[room_id][key] = "START"
+        # for key, value in rooms[room_id].items():
+        #     if key != "clients":
+        #         rooms[room_id][key] = "START"
+        chance = random.choice([0, 1])
+        rooms[room_id][rooms[room_id]["clients"][0]] = chance
+        rooms[room_id][rooms[room_id]["clients"][1]] = 1 - chance
     
     # return f"Joined room {room_id}. You can send and receive messages using /{room_id}."
     return f"Joined room {room_id}"
